@@ -132,7 +132,7 @@ describe('Extract Glyph Bitmap', function () {
                 const cCode = fs.readFileSync(extractedFile, 'utf8');
 
                 // Verify macro reference is present
-                const hasMacroReference = cCode.includes('_GLYPH_BITMAP_ADDR');
+                const hasMacroReference = cCode.includes('_GLYPH_BITMAP_BIN');
 
                 // Verify pointer declaration is present
                 const hasPointerDeclaration = /const uint8_t \* const glyph_bitmap/.test(cCode);

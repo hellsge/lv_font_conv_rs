@@ -56,7 +56,7 @@ lv_font_conv --font Roboto-Regular.ttf --range 0x20-0x7F --size 16 --format lvgl
 
 使用方法：
 ```c
-#define MY_FONT_GLYPH_BITMAP_ADDR 0x08100000  // 定义 flash 地址
+#define MY_FONT_GLYPH_BITMAP_BIN 0x08100000  // 定义 flash 地址
 #include "my_font.c"
 ```
 
@@ -247,7 +247,7 @@ lv_font_conv --font Roboto-Regular.ttf -r 0x20-0x7F ^
 
 ```c
 // 在包含字体之前定义 flash 地址
-#define MY_FONT_GLYPH_BITMAP_ADDR 0x08100000
+#define MY_FONT_GLYPH_BITMAP_BIN 0x08100000
 
 #include "my_font.c"
 ```
@@ -267,12 +267,12 @@ static const uint8_t glyph_bitmap[] = {
 #### 提取模式（使用 `--extract-glyph-bitmap`）
 
 ```c
-#ifndef MY_FONT_GLYPH_BITMAP_ADDR
-#define MY_FONT_GLYPH_BITMAP_ADDR 0
-#warning "Please define MY_FONT_GLYPH_BITMAP_ADDR to the flash memory address"
+#ifndef MY_FONT_GLYPH_BITMAP_BIN
+#define MY_FONT_GLYPH_BITMAP_BIN 0
+#warning "Please define MY_FONT_GLYPH_BITMAP_BIN to the flash memory address"
 #endif
 
-static const uint8_t * const glyph_bitmap = (const uint8_t *)MY_FONT_GLYPH_BITMAP_ADDR;
+static const uint8_t * const glyph_bitmap = (const uint8_t *)MY_FONT_GLYPH_BITMAP_BIN;
 ```
 
 二进制文件（`my_font_glyph_bitmap.bin`）包含与内联数组中相同的字节序列，确保与 LVGL 字体渲染引擎完全兼容。
@@ -340,7 +340,7 @@ lv_font_conv --font Roboto-Regular.ttf -r 0x20-0x7F \
 // 使用 STM32CubeProgrammer 或其他工具
 
 // 3. 在代码中使用字体
-#define MY_FONT_GLYPH_BITMAP_ADDR 0x08100000
+#define MY_FONT_GLYPH_BITMAP_BIN 0x08100000
 #include "my_font.c"
 
 // 4. 在 LVGL 中使用
@@ -360,7 +360,7 @@ lv_obj_set_style_text_font(label, &my_font, 0);
 // esptool.py write_flash 0x310000 my_font_glyph_bitmap.bin
 
 // 3. 在代码中使用
-#define MY_FONT_GLYPH_BITMAP_ADDR 0x3F410000  // 映射后的地址
+#define MY_FONT_GLYPH_BITMAP_BIN 0x3F410000  // 映射后的地址
 #include "my_font.c"
 ```
 
@@ -382,7 +382,7 @@ lv_obj_set_style_text_font(label, &my_font, 0);
 
 - C 文件：用户指定的输出文件名（如 `my_font.c`）
 - 二进制文件：自动生成为 `{basename}_glyph_bitmap.bin`（如 `my_font_glyph_bitmap.bin`）
-- 宏名称：自动生成为 `{BASENAME}_GLYPH_BITMAP_ADDR`（如 `MY_FONT_GLYPH_BITMAP_ADDR`）
+- 宏名称：自动生成为 `{BASENAME}_GLYPH_BITMAP_BIN`（如 `MY_FONT_GLYPH_BITMAP_BIN`）
 
 ---
 
@@ -471,13 +471,13 @@ lv_font_conv --font font.ttf -r 0x20-0x7F \
 
 **警告信息**：
 ```
-warning: "Please define MY_FONT_GLYPH_BITMAP_ADDR to the flash memory address"
+warning: "Please define MY_FONT_GLYPH_BITMAP_BIN to the flash memory address"
 ```
 
 **解决方案**：
 在包含字体文件之前定义宏：
 ```c
-#define MY_FONT_GLYPH_BITMAP_ADDR 0x08100000
+#define MY_FONT_GLYPH_BITMAP_BIN 0x08100000
 #include "my_font.c"
 ```
 
