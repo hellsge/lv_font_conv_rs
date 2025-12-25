@@ -138,6 +138,82 @@ describe('Cli', function () {
     });
   });
 
+  describe('extract-glyph-bitmap', function () {
+    /**
+     * **Feature: glyph-bitmap-extraction, Property 6: 格式兼容性验证**
+     * *对于任何*启用 `--extract-glyph-bitmap` 的命令，如果 `--format` 不是 `lvgl`，应该产生错误并阻止执行
+     * **Validates: Requirements 3.2, 3.4**
+     */
+    it('Property 6: Format compatibility validation', async function () {
+      await fc.assert(
+        fc.asyncProperty(
+          fc.constantFrom('bin', 'dump'), // Non-lvgl formats
+          async format => {
+            try {
+              await run([
+                '--font', font, '--range', '0x41', '--size', '18',
+                '--bpp', '2', '--format', format, '--extract-glyph-bitmap',
+                '-o', 'test_output'
+              ], true);
+              // If we get here without error, the test should fail
+              assert.fail('Expected error for --extract-glyph-bitmap with non-lvgl format');
+            } catch (err) {
+              // Should contain error about format incompatibility
+              assert.ok(
+                /--extract-glyph-bitmap is only supported with --format lvgl/.test(err.message),
+                `Expected format incompatibility error, got: ${err.message}`
+              );
+            }
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+
+    it('Should accept --extract-glyph-bitmap with --format lvgl', async function () {
+      let rnd = Math.random().toString(16).slice(2, 10) + '.c';
+      let file = path.join(__dirname, rnd);
+
+      try {
+        await run([
+          '--font', font, '--range', '0x41', '--size', '18',
+          '-o', file, '--bpp', '2', '--format', 'lvgl',
+          '--extract-glyph-bitmap'
+        ], true);
+
+        // Should succeed and create file
+        assert.ok(fs.existsSync(file));
+      } finally {
+        if (fs.existsSync(file)) fs.unlinkSync(file);
+        // Also clean up potential binary file
+        let binFile = file.replace('.c', '_glyph_bitmap.bin');
+        if (fs.existsSync(binFile)) fs.unlinkSync(binFile);
+      }
+    });
+
+    it('Should reject --extract-glyph-bitmap with --format bin', async function () {
+      await assert.rejects(
+        run([
+          '--font', font, '--range', '0x41', '--size', '18',
+          '--bpp', '2', '--format', 'bin', '--extract-glyph-bitmap',
+          '-o', 'test_output.bin'
+        ], true),
+        /--extract-glyph-bitmap is only supported with --format lvgl/
+      );
+    });
+
+    it('Should reject --extract-glyph-bitmap with --format dump', async function () {
+      await assert.rejects(
+        run([
+          '--font', font, '--range', '0x41', '--size', '18',
+          '--bpp', '2', '--format', 'dump', '--extract-glyph-bitmap',
+          '-o', 'test_output'
+        ], true),
+        /--extract-glyph-bitmap is only supported with --format lvgl/
+      );
+    });
+  });
+
   describe('pixel-order', function () {
     /**
      * **Feature: pixel-order-control, Property 10: LSB 与压缩互斥**
