@@ -8,3 +8,27 @@ dist
 *.swp
 .vscode
 .kiro/specs/
+
+# Test output directories
+test_output/
+test_dump/
+
+# Generated test files
+*.bin
+test_*.c
+test_*.js
+harmony*.c
+inline.c
+extract.c
+debug_*.js
+analyze_*.js
+verify_*.js
+count_*.js
+check_*.js
+compare_*.js
+recount_*.js
+
+# Reference files (keep locally, don't commit)
+UNDERSTANDING_LVGL_FONT_FORMAT.md
+lv_font_fmt_txt.c
+HarmonyOS.ttf
