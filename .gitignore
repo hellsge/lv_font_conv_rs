@@ -9,6 +9,10 @@ dist
 .vscode
 .kiro/specs/
 
+# Build temp files
+node-v*.zip
+temp_node/
+
 # Test output directories
 test_output/
 test_dump/
